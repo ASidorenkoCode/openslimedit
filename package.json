@@ -1,7 +1,7 @@
 {
-  "name": "open-hashline",
-  "version": "0.6.1",
-  "description": "OpenCode plugin that tags lines with content hashes for reliable LLM edits",
+  "name": "openslimedit",
+  "version": "1.0.0",
+  "description": "OpenCode plugin that reduces token usage by up to 33% — compresses tool descriptions, compacts read output, adds line-range edit support",
   "type": "module",
   "license": "MIT",
   "author": "ASidorenkoCode",
@@ -16,7 +16,7 @@
   "keywords": [
     "opencode",
     "opencode-plugin",
-    "hashline",
+    "token-optimization",
     "llm",
     "code-editing",
     "ai"

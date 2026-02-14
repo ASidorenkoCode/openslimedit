@@ -1,12 +1,12 @@
 import fs from "fs"
 import path from "path"
 
-const PLUGIN_NAME = "open-hashline"
+const PLUGIN_NAME = "openslimedit"
 
 // INIT_CWD is set by npm/bun to the directory where install was run
 const projectDir = process.env.INIT_CWD
 if (!projectDir) {
-  console.log(`  open-hashline installed. Add "${PLUGIN_NAME}" to your .opencode/opencode.json plugins array.`)
+  console.log(`  openslimedit installed. Add "${PLUGIN_NAME}" to your .opencode/opencode.json plugins array.`)
   process.exit(0)
 }
 
@@ -23,7 +23,7 @@ try {
     // Also check for opencode.jsonc
     const jsoncFile = path.join(configDir, "opencode.jsonc")
     if (fs.existsSync(jsoncFile)) {
-      console.log(`  open-hashline: found opencode.jsonc — please add "${PLUGIN_NAME}" to the plugin array manually.`)
+      console.log(`  openslimedit: found opencode.jsonc — please add "${PLUGIN_NAME}" to the plugin array manually.`)
       process.exit(0)
     }
   }
@@ -38,7 +38,7 @@ try {
   )
 
   if (alreadyExists) {
-    console.log(`  open-hashline: already configured in ${configFile}`)
+    console.log(`  openslimedit: already configured in ${configFile}`)
     process.exit(0)
   }
 
@@ -49,7 +49,7 @@ try {
   }
 
   fs.writeFileSync(configFile, JSON.stringify(config, null, 2) + "\n")
-  console.log(`  open-hashline: added to ${configFile}`)
+  console.log(`  openslimedit: added to ${configFile}`)
 } catch (err) {
-  console.log(`  open-hashline installed. Add "${PLUGIN_NAME}" to your .opencode/opencode.json plugins array.`)
+  console.log(`  openslimedit installed. Add "${PLUGIN_NAME}" to your .opencode/opencode.json plugins array.`)
 }
