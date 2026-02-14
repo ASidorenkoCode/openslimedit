@@ -7,11 +7,11 @@
   "author": "ASidorenkoCode",
   "repository": {
     "type": "git",
-    "url": "https://github.com/ASidorenkoCode/openhashline.git"
+    "url": "https://github.com/ASidorenkoCode/openslimedit.git"
   },
-  "homepage": "https://github.com/ASidorenkoCode/openhashline",
+  "homepage": "https://github.com/ASidorenkoCode/openslimedit",
   "bugs": {
-    "url": "https://github.com/ASidorenkoCode/openhashline/issues"
+    "url": "https://github.com/ASidorenkoCode/openslimedit/issues"
   },
   "keywords": [
     "opencode",
