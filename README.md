@@ -184,14 +184,25 @@ The hash-tagged read output, custom tool schemas, and system prompt injection ad
 
 *\*Includes failed multi-edit run*
 
+### Large File Scaling — Minimax M2.5 Free
+
+The benchmarks above use small files (21-115 lines). How does OpenSlimedit perform on real-world file sizes?
+
+| File Size | Baseline | OpenSlimedit | Saved |
+|---|---|---|---|
+| 1k lines | 37,743 | 30,697 | **-18.7%** |
+| 3k lines | 29,021 | 25,832 | **-11.0%** |
+| 6k lines | 29,422 | 25,747 | **-12.5%** |
+| 10k lines | 29,405 | 25,742 | **-12.5%** |
+
+Savings are smaller on large files (11-19%) because the file content dominates the token count — tool description compression is a smaller proportion of the total. Still a consistent win at every file size.
+
 ### Key Findings
 
 - **Tool description compression is the biggest win.** Tool schemas are sent with every API call. Shortening them saves thousands of input tokens per step, and this compounds across multi-step tasks.
 - **Hashline increases token usage for most models.** The hash-tagged read output, custom tool schemas, and system prompt injection add per-step overhead that outweighs the savings from shorter `oldString` values.
-- **OpenSlimedit consistently saves 21-33% across all tested models** with zero regressions on Opus 4.6. Some models show regressions on individual cases (Minimax on multi-edit, Codex on single-edit) but the total is always significantly lower.
+- **OpenSlimedit consistently saves 11-33% across all tested models and file sizes** with zero regressions on Opus 4.6. Some models show regressions on individual cases (Minimax on multi-edit, Codex on single-edit) but the total is always significantly lower.
 - **Custom tools confuse some models.** Minimax and Codex struggle with non-standard tool schemas, leading to extra steps or failures. OpenSlimedit avoids this entirely by only modifying descriptions of existing tools.
-
-> **Note:** These benchmarks use small files (21-115 lines). On larger files, the relative savings from tool description compression become even more significant as more API steps are needed.
 
 <details>
 <summary>Raw data — Hashline runs</summary>
@@ -278,6 +289,22 @@ The hash-tagged read output, custom tool schemas, and system prompt injection ad
 | openslimedit | minimax-m2.5-free | multi-line-replace | 14,744 ms | 1,316 | 405 | 1,721 | yes |
 | openslimedit | minimax-m2.5-free | multi-edit | 13,289 ms | 7,385 | 649 | 8,034 | yes |
 | openslimedit | minimax-m2.5-free | large-file-edit | 21,090 ms | 3,214 | 699 | 3,913 | yes |
+
+</details>
+
+<details>
+<summary>Raw data — Large file scaling runs (Minimax M2.5 Free)</summary>
+
+| Mode | Model | Case | Time | Input | Output | Total | Success |
+|---|---|---|---|---|---|---|---|
+| baseline | minimax-m2.5-free | 1k-lines | 51,367 ms | 36,733 | 1,010 | 37,743 | yes |
+| baseline | minimax-m2.5-free | 3k-lines | 39,505 ms | 28,392 | 629 | 29,021 | yes |
+| baseline | minimax-m2.5-free | 6k-lines | 47,862 ms | 28,398 | 1,024 | 29,422 | yes |
+| baseline | minimax-m2.5-free | 10k-lines | 40,794 ms | 28,523 | 882 | 29,405 | yes |
+| openslimedit | minimax-m2.5-free | 1k-lines | 25,237 ms | 29,788 | 909 | 30,697 | yes |
+| openslimedit | minimax-m2.5-free | 3k-lines | 45,621 ms | 25,247 | 585 | 25,832 | yes |
+| openslimedit | minimax-m2.5-free | 6k-lines | 33,315 ms | 25,158 | 589 | 25,747 | yes |
+| openslimedit | minimax-m2.5-free | 10k-lines | 19,114 ms | 25,173 | 569 | 25,742 | yes |
 
 </details>
 
