@@ -1,6 +1,6 @@
 # OpenSlimedit
 
-An [OpenCode](https://github.com/anomalyco/opencode) plugin that reduces token usage by up to 33% with zero configuration. It compresses tool descriptions, compacts read output, and adds line-range edit support.
+An [OpenCode](https://github.com/anomalyco/opencode) plugin that reduces token usage by up to 45% with zero configuration. It compresses tool descriptions, compacts read output, and adds line-range edit support.
 
 ---
 
@@ -9,14 +9,16 @@ An [OpenCode](https://github.com/anomalyco/opencode) plugin that reduces token u
 ```
 Total tokens vs baseline (lower is better)
 
-Claude Opus 4.6     [=================>             ] -21.8%  saved
-Claude Sonnet 4.5   [========================>      ] -32.6%  saved
-GPT 5.2 Codex       [====================>          ] -26.7%  saved
-Minimax M2.5 Free   [==================>            ] -24.8%  saved
+GPT 5.3 Codex       [================================>      ] -45.1%  saved
+Claude Sonnet 4.5   [========================>              ] -32.6%  saved
+GPT 5.2 Codex       [====================>                  ] -26.7%  saved
+Minimax M2.5 Free   [==================>                    ] -24.8%  saved
+Claude Opus 4.6     [=================>                     ] -21.8%  saved
 ```
 
 | Model | Baseline | OpenSlimedit | Saved |
 |---|---|---|---|
+| GPT 5.3 Codex | 77,494 tokens | 42,509 tokens | **-45.1%** |
 | Claude Opus 4.6 | 60,841 tokens | 47,590 tokens | **-21.8%** |
 | Claude Sonnet 4.5 | 120,884 tokens | 81,471 tokens | **-32.6%** |
 | GPT 5.2 Codex | 39,185 tokens | 28,713 tokens | **-26.7%** |
@@ -121,6 +123,7 @@ Hashline:
   Minimax M2.5 Free   █████████ +9.1%
 
 OpenSlimedit:
+  GPT 5.3 Codex       ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓ -45.1%
   Claude Opus 4.6     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓ -21.8%
   Claude Sonnet 4.5   ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓ -32.6%
   GPT 5.2 Codex       ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓ -26.7%
@@ -163,6 +166,16 @@ The hash-tagged read output, custom tool schemas, and system prompt injection ad
 
 *\*Hashline multi-edit failed (760s timeout loop); total includes failed run*
 
+#### GPT 5.3 Codex
+
+| Case | Baseline | OpenSlimedit |
+|---|---|---|
+| single-edit | 10,445 | **10,402 (-0.4%)** |
+| multi-line-replace | 20,468 | **11,312 (-44.7%)** |
+| multi-edit | 21,299 | **6,068 (-71.5%)** |
+| large-file-edit | 25,282 | **14,727 (-41.8%)** |
+| **Total** | **77,494** | **42,509 (-45.1%)** |
+
 #### Minimax M2.5 Free
 
 | Case | Baseline | Hashline | Smart Edit | OpenSlimedit |
@@ -177,6 +190,7 @@ The hash-tagged read output, custom tool schemas, and system prompt injection ad
 
 | Model | Hashline | Smart Edit | OpenSlimedit |
 |---|---|---|---|
+| **GPT 5.3 Codex** | — | — | **-45.1%** |
 | **Claude Opus 4.6** | +14.0% | -2.5% | **-21.8%** |
 | **Claude Sonnet 4.5** | +15.2% | — | **-32.6%** |
 | **GPT 5.2 Codex** | +49.9%* | — | **-26.7%** |
@@ -201,7 +215,7 @@ Savings are smaller on large files (11-19%) because the file content dominates t
 
 - **Tool description compression is the biggest win.** Tool schemas are sent with every API call. Shortening them saves thousands of input tokens per step, and this compounds across multi-step tasks.
 - **Hashline increases token usage for most models.** The hash-tagged read output, custom tool schemas, and system prompt injection add per-step overhead that outweighs the savings from shorter `oldString` values.
-- **OpenSlimedit consistently saves 11-33% across all tested models and file sizes** with zero regressions on Opus 4.6. Some models show regressions on individual cases (Minimax on multi-edit, Codex on single-edit) but the total is always significantly lower.
+- **OpenSlimedit consistently saves 11-45% across all tested models and file sizes** with zero regressions on Opus 4.6. GPT 5.3 Codex shows the largest savings at 45.1%. Some models show regressions on individual cases (Minimax on multi-edit, Codex 5.2 on single-edit) but the total is always significantly lower.
 - **Custom tools confuse some models.** Minimax and Codex struggle with non-standard tool schemas, leading to extra steps or failures. OpenSlimedit avoids this entirely by only modifying descriptions of existing tools.
 
 <details>
@@ -249,6 +263,10 @@ Savings are smaller on large files (11-19%) because the file content dominates t
 | baseline | minimax-m2.5-free | multi-line-replace | 16,274 ms | 10,668 | 437 | 11,105 | yes |
 | baseline | minimax-m2.5-free | multi-edit | 43,462 ms | 1,233 | 1,075 | 2,308 | yes |
 | baseline | minimax-m2.5-free | large-file-edit | 20,430 ms | 3,250 | 677 | 3,927 | yes |
+| baseline | gpt-5.3-codex | single-edit | 12,075 ms | 10,218 | 227 | 10,445 | yes |
+| baseline | gpt-5.3-codex | multi-line-replace | 22,378 ms | 20,110 | 358 | 20,468 | yes |
+| baseline | gpt-5.3-codex | multi-edit | 17,870 ms | 20,723 | 576 | 21,299 | yes |
+| baseline | gpt-5.3-codex | large-file-edit | 22,028 ms | 24,384 | 898 | 25,282 | yes |
 
 </details>
 
@@ -289,6 +307,10 @@ Savings are smaller on large files (11-19%) because the file content dominates t
 | openslimedit | minimax-m2.5-free | multi-line-replace | 14,744 ms | 1,316 | 405 | 1,721 | yes |
 | openslimedit | minimax-m2.5-free | multi-edit | 13,289 ms | 7,385 | 649 | 8,034 | yes |
 | openslimedit | minimax-m2.5-free | large-file-edit | 21,090 ms | 3,214 | 699 | 3,913 | yes |
+| openslimedit | gpt-5.3-codex | single-edit | 10,638 ms | 10,186 | 216 | 10,402 | yes |
+| openslimedit | gpt-5.3-codex | multi-line-replace | 10,419 ms | 10,974 | 338 | 11,312 | yes |
+| openslimedit | gpt-5.3-codex | multi-edit | 15,752 ms | 5,470 | 598 | 6,068 | yes |
+| openslimedit | gpt-5.3-codex | large-file-edit | 28,453 ms | 13,359 | 1,368 | 14,727 | yes |
 
 </details>
 
