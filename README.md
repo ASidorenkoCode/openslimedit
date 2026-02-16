@@ -211,7 +211,16 @@ The benchmarks above use small files (21-115 lines). How does OpenSlimedit perfo
 | 6k lines | 29,422 | 25,747 | **-12.5%** |
 | 10k lines | 29,405 | 25,742 | **-12.5%** |
 
-Savings are smaller on large files (11-19%) because the file content dominates the token count — tool description compression is a smaller proportion of the total. Still a consistent win at every file size.
+#### GPT 5.3 Codex (5-iteration average)
+
+| File Size | Baseline | OpenSlimedit | Saved |
+|---|---|---|---|
+| 1k lines | 38,962 | 29,833 | **-23.4%** |
+| 3k lines | 59,283 | 38,861 | **-34.4%** |
+| 6k lines | 70,380 | 29,193 | **-58.5%** |
+| 10k lines | 65,888 | 34,315 | **-47.9%** |
+
+Minimax shows consistent savings (11-19%) at all file sizes. GPT 5.3 Codex shows even larger savings (23-59%) that increase with file size — the baseline becomes noisier and more expensive on larger files while OpenSlimedit stays consistent.
 
 ### Key Findings
 
@@ -329,6 +338,46 @@ Savings are smaller on large files (11-19%) because the file content dominates t
 | openslimedit | minimax-m2.5-free | 3k-lines | 45,621 ms | 25,247 | 585 | 25,832 | yes |
 | openslimedit | minimax-m2.5-free | 6k-lines | 33,315 ms | 25,158 | 589 | 25,747 | yes |
 | openslimedit | minimax-m2.5-free | 10k-lines | 19,114 ms | 25,173 | 569 | 25,742 | yes |
+| baseline | gpt-5.3-codex | 1k-lines | 59,368 ms | 36,850 | 1,818 | 38,668 | yes |
+| baseline | gpt-5.3-codex | 1k-lines | 39,687 ms | 35,650 | 1,692 | 37,342 | yes |
+| baseline | gpt-5.3-codex | 1k-lines | 30,868 ms | 34,345 | 1,551 | 35,896 | yes |
+| baseline | gpt-5.3-codex | 1k-lines | 30,132 ms | 34,123 | 1,436 | 35,559 | yes |
+| baseline | gpt-5.3-codex | 1k-lines | 36,521 ms | 45,786 | 1,558 | 47,344 | yes |
+| baseline | gpt-5.3-codex | 3k-lines | 37,920 ms | 61,005 | 1,595 | 62,600 | yes |
+| baseline | gpt-5.3-codex | 3k-lines | 42,808 ms | 63,127 | 2,088 | 65,215 | yes |
+| baseline | gpt-5.3-codex | 3k-lines | 29,531 ms | 48,845 | 1,422 | 50,267 | yes |
+| baseline | gpt-5.3-codex | 3k-lines | 29,003 ms | 71,641 | 1,260 | 72,901 | yes |
+| baseline | gpt-5.3-codex | 3k-lines | 29,224 ms | 44,010 | 1,421 | 45,431 | yes |
+| baseline | gpt-5.3-codex | 6k-lines | 32,856 ms | 53,029 | 1,665 | 54,694 | yes |
+| baseline | gpt-5.3-codex | 6k-lines | 35,228 ms | 79,907 | 1,764 | 81,671 | yes |
+| baseline | gpt-5.3-codex | 6k-lines | 42,342 ms | 92,061 | 2,144 | 94,205 | yes |
+| baseline | gpt-5.3-codex | 6k-lines | 33,617 ms | 74,514 | 1,562 | 76,076 | yes |
+| baseline | gpt-5.3-codex | 6k-lines | 35,195 ms | 43,847 | 1,407 | 45,254 | yes |
+| baseline | gpt-5.3-codex | 10k-lines | 29,958 ms | 77,713 | 1,412 | 79,125 | yes |
+| baseline | gpt-5.3-codex | 10k-lines | 37,031 ms | 61,844 | 1,758 | 63,602 | yes |
+| baseline | gpt-5.3-codex | 10k-lines | 29,698 ms | 61,034 | 1,493 | 62,527 | yes |
+| baseline | gpt-5.3-codex | 10k-lines | 41,649 ms | 60,975 | 1,533 | 62,508 | yes |
+| baseline | gpt-5.3-codex | 10k-lines | 26,924 ms | 60,525 | 1,152 | 61,677 | yes |
+| openslimedit | gpt-5.3-codex | 1k-lines | 35,515 ms | 16,960 | 1,696 | 18,656 | yes |
+| openslimedit | gpt-5.3-codex | 1k-lines | 27,865 ms | 42,485 | 1,198 | 43,683 | yes |
+| openslimedit | gpt-5.3-codex | 1k-lines | 30,197 ms | 20,297 | 1,540 | 21,837 | yes |
+| openslimedit | gpt-5.3-codex | 1k-lines | 42,478 ms | 31,444 | 1,959 | 33,403 | yes |
+| openslimedit | gpt-5.3-codex | 1k-lines | 23,994 ms | 30,360 | 1,225 | 31,585 | yes |
+| openslimedit | gpt-5.3-codex | 3k-lines | 35,438 ms | 46,056 | 1,774 | 47,830 | yes |
+| openslimedit | gpt-5.3-codex | 3k-lines | 38,383 ms | 60,527 | 1,983 | 62,510 | yes |
+| openslimedit | gpt-5.3-codex | 3k-lines | 39,220 ms | 23,657 | 1,699 | 25,356 | yes |
+| openslimedit | gpt-5.3-codex | 3k-lines | 28,254 ms | 27,737 | 1,428 | 29,165 | yes |
+| openslimedit | gpt-5.3-codex | 3k-lines | 29,321 ms | 28,430 | 1,013 | 29,443 | yes |
+| openslimedit | gpt-5.3-codex | 6k-lines | 29,934 ms | 27,332 | 1,451 | 28,783 | yes |
+| openslimedit | gpt-5.3-codex | 6k-lines | 29,402 ms | 22,984 | 1,445 | 24,429 | yes |
+| openslimedit | gpt-5.3-codex | 6k-lines | 34,198 ms | 28,639 | 1,410 | 30,049 | yes |
+| openslimedit | gpt-5.3-codex | 6k-lines | 32,525 ms | 33,417 | 1,669 | 35,086 | yes |
+| openslimedit | gpt-5.3-codex | 6k-lines | 26,625 ms | 26,330 | 1,286 | 27,616 | yes |
+| openslimedit | gpt-5.3-codex | 10k-lines | 26,953 ms | 28,106 | 1,180 | 29,286 | yes |
+| openslimedit | gpt-5.3-codex | 10k-lines | 33,084 ms | 28,065 | 1,423 | 29,488 | yes |
+| openslimedit | gpt-5.3-codex | 10k-lines | 33,384 ms | 38,156 | 1,324 | 39,480 | yes |
+| openslimedit | gpt-5.3-codex | 10k-lines | 32,269 ms | 42,259 | 1,277 | 43,536 | yes |
+| openslimedit | gpt-5.3-codex | 10k-lines | 28,136 ms | 28,476 | 1,308 | 29,784 | yes |
 
 </details>
 
