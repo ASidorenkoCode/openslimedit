@@ -6,7 +6,7 @@ const PLUGIN_NAME = "openslimedit"
 // INIT_CWD is set by npm/bun to the directory where install was run
 const projectDir = process.env.INIT_CWD
 if (!projectDir) {
-  console.log(`  openslimedit installed. Add "${PLUGIN_NAME}" to your .opencode/opencode.json plugins array.`)
+  console.log(`  openslimedit installed. Add "${PLUGIN_NAME}" to your .opencode/opencode.json plugin array.`)
   process.exit(0)
 }
 
@@ -42,7 +42,7 @@ try {
     process.exit(0)
   }
 
-  config.plugin.push(PLUGIN_NAME)
+  config.plugin.push(PLUGIN_NAME + "@latest")
 
   if (!fs.existsSync(configDir)) {
     fs.mkdirSync(configDir, { recursive: true })
@@ -51,5 +51,5 @@ try {
   fs.writeFileSync(configFile, JSON.stringify(config, null, 2) + "\n")
   console.log(`  openslimedit: added to ${configFile}`)
 } catch (err) {
-  console.log(`  openslimedit installed. Add "${PLUGIN_NAME}" to your .opencode/opencode.json plugins array.`)
+  console.log(`  openslimedit installed. Add "${PLUGIN_NAME}" to your .opencode/opencode.json plugin array.`)
 }

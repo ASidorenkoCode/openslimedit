@@ -71,15 +71,23 @@ cd openslimedit
 bun install
 ```
 
-Then add to your OpenCode config:
+Then add it to your OpenCode config using the `plugin` array:
 
 ```json
 {
-  "plugins": {
-    "openslimedit": {
-      "module": "file:///path/to/openslimedit/src/index.ts"
-    }
-  }
+  "plugin": [
+    "file:///path/to/openslimedit/src/index.ts"
+  ]
+}
+```
+
+If you installed from npm, use the package entry instead:
+
+```json
+{
+  "plugin": [
+    "openslimedit@latest"
+  ]
 }
 ```
 
