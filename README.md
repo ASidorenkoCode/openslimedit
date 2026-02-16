@@ -44,26 +44,18 @@ No custom tools. No system prompt injection. No modifications to built-in tool b
 
 ## Installation
 
-### Prerequisites
+Add to your OpenCode config:
 
-- [OpenCode](https://github.com/anomalyco/opencode) with plugin hook support
-- [Bun](https://bun.sh) runtime
-
-```bash
-npm install openslimedit
-```
-
-Then add it to your OpenCode config (`.opencode/opencode.json` or `opencode.jsonc`):
-
-```json
+```jsonc
+// .opencode/opencode.jsonc
 {
-  "plugin": [
-    "openslimedit@latest"
-  ]
+    "plugin": ["openslimedit@latest"]
 }
 ```
 
-Start OpenCode and the plugin activates automatically.
+Using `@latest` ensures you always get the newest version automatically when OpenCode starts.
+
+Restart OpenCode. The plugin will automatically start optimizing your sessions.
 
 ---
 
