@@ -2,6 +2,29 @@
 
 An [OpenCode](https://github.com/anomalyco/opencode) plugin that reduces token usage by up to 45% with zero configuration. It compresses tool descriptions, compacts read output, and adds line-range edit support.
 
+## OpenCode V2 port
+
+This fork ports the plugin to the **OpenCode V2 plugin API** — OpenCode V2 rejects V1 hook objects (*"Plugin must export a default definition with an id and a setup function"*), so the V1 hooks are registered as their V2 equivalents instead:
+
+| V1 hook | V2 equivalent | What it does |
+|---|---|---|
+| `tool.definition` | `ctx.session.hook("context")` | Compact tool descriptions on every dispatch (now covers V2 tool names: `shell`, `webfetch`, `patch`) |
+| `tool.execute.before` | `ctx.tool.hook("execute.before")` | Line-range `oldString` expansion (`"55-64"`); reads `path` per the V2 edit tool |
+| `tool.execute.after` | `ctx.tool.hook("execute.after")` | Compact read/edit output |
+
+Every hook is fail-open: on any error the original behavior is kept.
+
+Install (OpenCode V2):
+
+```jsonc
+// ~/.config/opencode/opencode.json
+{
+  "plugins": ["openslimedit@git+https://github.com/cpvcristian1/openslimedit.git"]
+}
+```
+
+Port of [ASidorenkoCode/openslimedit](https://github.com/ASidorenkoCode/openslimedit) (MIT).
+
 ---
 
 ## Token Savings at a Glance
