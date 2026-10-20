@@ -1,6 +1,10 @@
 # OpenSlimedit
 
-An [OpenCode](https://github.com/anomalyco/opencode) plugin that reduces token usage by up to 45% with zero configuration. It compresses tool descriptions, compacts read output, and adds line-range edit support.
+An [OpenCode](https://github.com/anomalyco/opencode) V2 plugin that reduces token usage by up to 45% with zero configuration. It compresses tool descriptions, compacts read output, and adds line-range edit support.
+
+> **Ported using Space Bunny** — possibly powered by MiniMax. The V2 port was developed with Space Bunny; the exact underlying model provider is not confirmed.
+
+> Andreas note: Everything here was create by the model i didn't check anything, I'm sorry about the package.json dear ASidorenkoCode
 
 ---
 
@@ -49,7 +53,7 @@ Add to your OpenCode config:
 ```jsonc
 // .opencode/opencode.jsonc
 {
-    "plugin": ["openslimedit@latest"]
+    "plugins": ["openslimedit@latest"]
 }
 ```
 
