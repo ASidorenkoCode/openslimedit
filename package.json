@@ -24,7 +24,8 @@
   "scripts": {},
   "main": "./src/index.ts",
   "exports": {
-    ".": "./src/index.ts"
+    ".": "./src/index.ts",
+    "./v2": "./src/index.v2.ts"
   },
   "files": [
     "src",

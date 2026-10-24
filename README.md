@@ -2,6 +2,8 @@
 
 An [OpenCode](https://github.com/anomalyco/opencode) plugin that reduces token usage by up to 45% with zero configuration. It compresses tool descriptions, compacts read output, and adds line-range edit support.
 
+**OpenCode 2.0.x users:** the npm entry below targets the OpenCode 1.x plugin API and does not load on 2.0.x — see [OpenCode v2](#opencode-v2-20x) below.
+
 ---
 
 ## Token Savings at a Glance
@@ -34,11 +36,52 @@ Three optimizations that compound across every API call:
 
 1. **Tool description compression** — Replaces verbose built-in tool descriptions with minimal versions. Since tool schemas are sent with every API call, this saves thousands of input tokens per step.
 
-2. **Compact read output** — Shortens absolute file paths to relative paths, strips type tags and footer boilerplate from file reads.
+2. **Compact read output** — Shortens absolute file paths to relative paths; on OpenCode 1.x also strips type tags and footer boilerplate (2.0.x results carry neither, so only the path shortening applies there).
 
 3. **Line-range edit expansion** — Allows the model to specify `oldString` as a line range like `"55-64"` instead of reproducing exact file content. The plugin transparently expands the range to the actual lines before the edit tool runs.
 
 No custom tools. No system prompt injection. No modifications to built-in tool behavior. Everything works through lightweight hooks.
+
+---
+
+## OpenCode v2 (2.0.x)
+
+The npm entry above targets the OpenCode 1.x plugin API; 2.0.x validates plugin shape and rejects the v1 format, so it does not load. 2.0.x hosts use the v2 entry `src/index.v2.ts` (export `./v2`, `{ id, setup }` shape):
+
+| v1 feature | 2.0.x status |
+|---|---|
+| Tool description compression | Kept — applied via `ctx.session.hook("context")` to every 2.0.x tool with a v1 counterpart: `read`, `edit`, `write`, `shell`, `glob`, `grep`, `webfetch` (v1's `apply_patch`/`bash`/`list`/`fetch` don't exist in 2.0.x and were dropped; `websearch` is intentionally unslimmed). |
+| Compact read output | Partial — 2.0.x results carry no type tags or footer boilerplate, so only the path shortening applies: `Read file /abs/path` → session-relative. |
+| Edit result compaction (`Edit applied successfully. …` → `OK`) | Equivalent — the single-line 2.0.x `Edited /abs/path (N replacement)` result is rewritten to `OK`. |
+| Line-range edit (`"55-64"` → real lines) | Kept — `execute.before` on `edit` (field is `path` in 2.0.x, `filePath` in 1.x). |
+
+The benchmark above was measured on OpenCode 1.x; the 45% number is not directly reproducible on 2.0.x because tool names and result formats differ, but the description-compression savings (the biggest contributor) carry over.
+
+Measured v2 savings (deterministic tokenizer bench, 2026-10-13 — no model
+involved, zero variance; originals byte-extracted from the 2.0.x binary):
+tool descriptions 414 → 42 tokens (saves 372: read 100, edit 108, write 40,
+shell 5, glob 16, grep 47, webfetch 56) ≈ 1.6% of a ~23K first turn; edit
+confirmations → `OK` save 18 tokens each; read-header relativization saves
+11 tokens per read. A typical edit task saves ≈ 400 tokens ≈ 1.7% of
+first-turn context (cached after turn 1). At the session-total level the
+effect is break-even — three edit tasks × {on,off} × 2 reps swung ±20% in
+inconsistent directions (run-to-run agent behavior + cache placement dominate),
+and a behavioral A/B (18 runs, 18/18 success both modes) showed tool-call
+counts indistinguishable from noise. Report per-element savings, not session
+percentages: on a single GPU with limited context every bit helps, but the
+v1 "45%" does not transfer to v2 session totals.
+
+Result compaction for `websearch`/`webfetch` output was investigated (2026-10-13) and deliberately not implemented: 2.0.x results arrive pre-cleaned from the provider (server-side conversion — 9 measured real outputs, 388 KB: 0.0% whitespace waste, no HTML/cookie/nav boilerplate), so no non-damaging plugin-level compaction is possible. The one-line overflow footer ("showing lines X-Y of Z; full output saved to …") is a functional pointer to the saved full output, so it is kept.
+
+Install on 2.0.x (until the v2 entry is published):
+
+```jsonc
+{
+  "plugins": ["file:///absolute/path/to/openslimedit/src/index.v2.ts"]
+}
+```
+
+Once the v2 entry is published, `openslimedit/v2` works the same way.
 
 ---
 
@@ -56,6 +99,19 @@ Add to your OpenCode config:
 Using `@latest` ensures you always get the newest version automatically when OpenCode starts.
 
 Restart OpenCode. The plugin will automatically start optimizing your sessions.
+
+Requires opencode v2.0+ (any 2.0.x server). Uses core session/tool hooks only.
+
+---
+
+## Updating
+
+npm installs (`openslimedit@latest`) update automatically on restart. Pinned
+versions: bump the pin, restart. There is no in-place updater.
+
+## Uninstall
+
+Remove the entry from your OpenCode config and restart.
 
 ---
 
@@ -354,7 +410,8 @@ Minimax shows consistent savings (11-19%) at all file sizes. GPT 5.3 Codex shows
 ```
 openslimedit/
 ├── src/
-│   └── index.ts      # Plugin implementation (single file)
+│   ├── index.ts      # v1 plugin entry
+│   └── index.v2.ts   # v2 plugin entry (`{ id, setup }`)
 ├── package.json
 ├── LICENSE
 └── README.md
@@ -369,3 +426,5 @@ Contributions are welcome. Please open an issue or submit a pull request.
 ## License
 
 This project is licensed under the [MIT License](LICENSE).
+
+
